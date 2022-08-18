@@ -1,35 +1,97 @@
-import data from "../media/data";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useMantineTheme } from "@mantine/core";
-import { useState } from "react";
-import _ from "lodash";
+import { useState, useEffect } from "react";
 import { BiLeftArrow } from "react-icons/bi";
+import { MdDelete } from "react-icons/md";
 
 const Note = () => {
   const theme = useMantineTheme();
+  const navigate = useNavigate();
+
   const urlparams = useParams();
-  const note = _.find(data, (o) => {
-    return o.id === parseInt(urlparams.id);
-  });
-  const [value, setValue] = useState(note?.body);
+
+  const [note, setNote] = useState(null);
+
+  useEffect(() => {
+    getNote();
+    window.scrollTo(0, 0);
+  }, []);
+
+  const getNote = async () => {
+    if (urlparams.id === "new") return;
+    let response = await fetch(`http://localhost:3004/notes/${urlparams.id}`);
+    setNote(await response.json());
+  };
+  const updateNote = async () => {
+    await fetch(`http://localhost:3004/notes/${urlparams.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...note, updated: new Date() }),
+    });
+    navigate("/");
+  };
+  const deleteNote = async () => {
+    await fetch(`http://localhost:3004/notes/${urlparams.id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      // body: JSON.stringify(note),
+    });
+    navigate("/");
+  };
+  const createNote = async () => {
+    await fetch(`http://localhost:3004/notes/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...note,
+        updated: new Date(),
+        created: new Date(),
+      }),
+    });
+    navigate("/");
+  };
+
+  const handleSubmit = () => {
+    if (urlparams.id !== "new" && !note.body) deleteNote();
+    else if (urlparams.id !== "new") updateNote();
+    else if (urlparams.id === "new" && note !== null) createNote();
+    navigate("/");
+  };
+
   return (
     <div>
-      <Link to="/">
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          margin: "22px 0",
+        }}
+      >
         <h1
           style={{
-            display: "inline-block",
             color:
               theme.colorScheme === "dark"
                 ? theme.colors.blue[0]
                 : theme.colors.dark[5],
           }}
         >
-          <BiLeftArrow />
+          <BiLeftArrow onClick={handleSubmit} />
         </h1>
-      </Link>
+
+        <h1
+          style={{
+            color:
+              theme.colorScheme === "dark"
+                ? theme.colors.blue[0]
+                : theme.colors.dark[5],
+          }}
+        >
+          <MdDelete onClick={deleteNote} />
+        </h1>
+      </div>
 
       <textarea
-        value={value}
+        value={note?.body}
         style={{
           fontSize: "1.2em",
           border: "none",
@@ -47,7 +109,9 @@ const Note = () => {
               ? theme.colors.dark[5]
               : theme.colors.blue[0],
         }}
-        onChange={(event) => setValue(event.currentTarget.value)}
+        onChange={(event) =>
+          setNote({ ...note, body: event.currentTarget.value })
+        }
       ></textarea>
     </div>
   );

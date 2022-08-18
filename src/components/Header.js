@@ -11,7 +11,6 @@ const Header = ({ darkTheme, onClick }) => {
       sx={(theme) => ({
         marginTop: "10px",
         input: {
-          marginLeft: "auto",
           "&:checked": { backgroundColor: theme.colors.dark[5] },
           backgroundColor: theme.colors.blue[0],
         },

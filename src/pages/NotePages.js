@@ -1,26 +1,39 @@
-import data from "../media/data";
-import ListItem from "../components/ListComp";
+import ListItem from "../components/ListComponent";
 import { Stack } from "@mantine/core/";
 import { TbNotes } from "react-icons/tb";
+import AddButton from "../components/AddButton";
+
 import _ from "lodash";
+import { useState, useEffect } from "react";
 
 const NotePage = () => {
+  const [notes, setNotes] = useState([]);
+  useEffect(() => {
+    getNotes();
+  }, []);
+  async function getNotes() {
+    const response = await fetch("http://localhost:3004/notes");
+    setNotes(await response.json());
+  }
   return (
-    <Stack sx={{ gap: "0px" }}>
-      <h1
-        style={{
-          display: "flex",
-          alignItems: "center",
-        }}
-      >
-        <TbNotes style={{ marginRight: "10px" }} />
-        Notes List
-        <span style={{ marginLeft: "auto" }}>{_.size(data)}</span>
-      </h1>
-      {data.map((note) => {
-        return <ListItem key={note.id} note={note} />;
-      })}
-    </Stack>
+    <div>
+      <Stack sx={{ gap: "0px" }}>
+        <h1
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <TbNotes style={{ marginRight: "10px" }} />
+          Notes List
+          <span style={{ marginLeft: "auto" }}>{_.size(notes)}</span>
+        </h1>
+        {notes.map((note) => {
+          return <ListItem key={note.id} note={note} />;
+        })}
+      </Stack>
+      <AddButton />
+    </div>
   );
 };
 export default NotePage;
