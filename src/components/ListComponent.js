@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
 import { Text } from "@mantine/core";
+import _ from "lodash";
 const ListItem = ({ note }) => {
+  const title = (() => {
+    const totle = _.split(note.body, "\n", 1)[0];
+    if (_.size(totle) > 45) return totle.slice(0, 45);
+    return totle;
+  })();
+
   return (
     <Text
       sx={(theme) => ({
@@ -19,7 +26,11 @@ const ListItem = ({ note }) => {
       size="xl"
       color="dimmed"
     >
-      {note.body}
+      {title}
+      {/* maybe good maybe bad; works */}
+      <span style={{ display: "block", fontSize: "0.8em" }}>
+        {new Date(note.created).toLocaleDateString()}
+      </span>
     </Text>
   );
 };
