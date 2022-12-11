@@ -2,6 +2,7 @@
   "name": "todoapp",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://xazye.github.io/noteApp",
   "dependencies": {
     "@mantine/core": "^5.1.0",
     "@mantine/hooks": "^5.1.1",
@@ -20,6 +21,8 @@
     "react-scripts": "^5.0.1"
   },
   "scripts": {
+    "predeploy":"npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

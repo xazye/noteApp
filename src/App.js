@@ -1,7 +1,7 @@
 import Header from "./components/Header";
 import NotePages from "./pages/NotePages";
 import Note from "./pages/Note";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as  HashRouter, Route, Routes } from "react-router-dom";
 import { Container, MantineProvider } from "@mantine/core";
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ function App() {
       withNormalizeCSS
     >
       <Container>
-        <Router>
+        <HashRouter>
           <Header
             darkTheme={darkTheme}
             onClick={(checked) => {
@@ -30,7 +30,7 @@ function App() {
 
             <Route path="/note/:id" element={<Note />} exact />
           </Routes>
-        </Router>
+        </HashRouter>
       </Container>
     </MantineProvider>
   );
