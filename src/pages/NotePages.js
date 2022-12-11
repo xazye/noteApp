@@ -2,19 +2,18 @@ import ListItem from "../components/ListComponent";
 import { Stack } from "@mantine/core/";
 import { TbNotes } from "react-icons/tb";
 import AddButton from "../components/AddButton";
-
+import { db } from "../backend/DB";
 import _ from "lodash";
 import { useState, useEffect } from "react";
 
 const NotePage = () => {
   const [notes, setNotes] = useState([]);
   useEffect(() => {
-    getNotes();
+    db.notes.toArray().then((result) => {
+      setNotes(result);
+    });
   }, []);
-  async function getNotes() {
-    const response = await fetch("http://localhost:3004/notes");
-    setNotes(await response.json());
-  }
+
   return (
     <div>
       <Stack sx={{ gap: "0px" }}>

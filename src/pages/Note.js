@@ -3,6 +3,7 @@ import { useMantineTheme } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { BiLeftArrow } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
+import { db } from "../backend/DB";
 
 const Note = () => {
   const theme = useMantineTheme();
@@ -19,43 +20,33 @@ const Note = () => {
 
   const getNote = async () => {
     if (urlparams.id === "new") return;
-    let response = await fetch(`http://localhost:3004/notes/${urlparams.id}`);
-    setNote(await response.json());
+    db.notes
+      .where("id")
+      .equals(+urlparams.id)
+      .first()
+      .then((result) => {
+        setNote(result);
+      });
   };
   const updateNote = async () => {
-    await fetch(`http://localhost:3004/notes/${urlparams.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...note, updated: new Date() }),
-    });
-    navigate("/");
+    db.notes
+      .update(+urlparams.id, { ...note, updated: new Date() })
+      .then(navigate("/"));
   };
   const deleteNote = async () => {
-    await fetch(`http://localhost:3004/notes/${urlparams.id}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      // body: JSON.stringify(note),
-    });
-    navigate("/");
+    db.notes.delete(+urlparams.id).then(navigate("/"));
   };
   const createNote = async () => {
-    await fetch(`http://localhost:3004/notes/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...note,
-        updated: new Date(),
-        created: new Date(),
-      }),
-    });
-    navigate("/");
+    db.notes
+      .add({ ...note, updated: new Date(), created: new Date() })
+      .then(navigate("/"));
   };
 
   const handleSubmit = () => {
     if (urlparams.id !== "new" && !note.body) deleteNote();
     else if (urlparams.id !== "new") updateNote();
     else if (urlparams.id === "new" && note !== null) createNote();
-    navigate("/");
+    // navigate("/");
   };
 
   return (
