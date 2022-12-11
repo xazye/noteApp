@@ -17,7 +17,7 @@ function App() {
       withNormalizeCSS
     >
       <Container>
-        <HashRouter>
+        <HashRouter basename="/noteApp">
           <Header
             darkTheme={darkTheme}
             onClick={(checked) => {
